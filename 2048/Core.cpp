@@ -1,97 +1,219 @@
 #include "Core.h"
 
-
-
 Core::Core()
 {
+	srand(time(NULL));
 	Size = 5;
-	*field = new Tile[Size];
-	for (int i = 0; i < Size; i++)
-	{
-		field[i] = new Tile[Size];
-	}
+	field = new Field(Size);
 }
 
 
 Core::Core(UINT32 sizexy)
 {
+	srand(time(NULL));
 	Size = sizexy;
-	*field = new Tile[Size];
-	for (int i = 0; i < Size; i++)
-	{
-		field[i] = new Tile[Size];
-	}
+	field = new Field(sizexy);
 }
 
-//===================
-//dirx ==   -1 - left
-//dirx ==	 1 - right
-//diry ==	 1 - up
-//diry ==	-1 - down
-//===================
-
-bool Core::Move(int dirx, int diry)
-{
-	bool res = false;
-	for (int x = 0; x<Size; x++)
-		for (int y = 0; y < Size; y++)
-		{
-			if (field[x][y].GetNum())
-			{
-				if (dirx != 0)
-				{
-					for (int nx = x + dirx; ((nx < Size) && (nx>Size))
-						|| (field[x][y].GetNum() != 0); nx += nx + dirx)
-						if ((field[nx][y].GetNum() != 0) && (field[x][y].GetNum() == field[nx][y].GetNum()))
-						{
-							field[nx][y] = field[nx][y] + field[x][y]; field[x][y] = 0;
-							res = true;
-						}
-				}
-				else
-				{
-					for (int ny = y + diry; ((ny < Size) && (ny>Size))
-						|| (field[x][y].GetNum() != 0); ny += ny + diry)
-						if ((field[x][ny].GetNum() != 0) && (field[x][y].GetNum() == field[x][ny].GetNum()))
-						{
-							field[x][ny] = field[x][ny] + field[x][y]; field[x][y] = 0;
-							res = true;
-						}
-				}
-			}
-
-		}
-	return res;
-}
 
 void Core::DrawField()
 {
-	system("clr");
+	//system("cls");
 
 	std::cout << '\n';
+	//------------ÂûâüC ýEEûQüA------------
 	for (int x = 0; x < Size*2; x++)
 	{
 		if(x%2)
 		for(int y = 0;y<Size;y++)
 		{
-			std::cout << '\t' << field[x / 2][y].GetNum();
+			if (field->GetTile(x/2,y).GetNum()!=0)
+			std::cout <<'|'<< field->GetTile(x / 2, y).GetNum() << '\t';
+			else std::cout << '|'<< '\t';
 		}
 		else std::cout << '\n';
 	}
 }
 
-int Process()
+int Core::Process()
 {
-	system("clr");
+	system("cls");
 
+	//==============Initialize================
+	UINT32 retrycount = 30;
+	UINT32 nretry = 0;
+	UINT32 x = rand() % Size;
+	UINT32 y = rand() % Size;
+	x = 0;
+	y = 0;
+	UINT32 count = 0;
+	int num = rand() % 2 + 2;
+	int check;
+	num += num % 2;
+	field->GetTile(x, y) = num;
+	this->DrawField();
+	std::cout << "\nLyubaya klavisha - osuschestvlenie hoda; ESC - vihod\n";
+	bool res1, res2, res3 = true;
+	//========================================
+	
+	while ((_getch() != 27)||(!res1 && !res2 && !res3 && (nretry<retrycount)))
+	{
+		system("cls");
+		
+		
+		this->DrawField();
+		if (count > 0)
+		{
+			field->GetTile(TileBackup.front().posx, TileBackup.front().posy) = TileBackup.front().tile;
+			TileBackup.pop_front();
+			count--;
+		}
+		else
+		{
+			State.push_front(field);
+			Gen(res3, TileBackup);
+		}
+		std::cout << "\n===================================";
+		this->DrawField();
+		system("pause>nul");
+		system("cls");
+		
+		this->DrawField();
+			switch (_getch()) {
+			case 'k':  res1=field->Move(1, 0);  break;
+			case 'i':  res1=field->Move(-1, 0);  break;
+			case 'j':  res1=field->Move(0, -1);  break;
+			case 'l':  res1=field->Move(0, 1);  break;
+			default: res1 = Move();	break;
+			}
+		res2 = Check();
+		res3 = CheckEmptyCells();
+		std::cout << "\n===================================";
+		this->DrawField();
+		system("pause>nul");
+		
+		
+		if (!res1 && !res2 && !res3 && (nretry<retrycount))
+		{
+			std::cout << "\n Perehod na shag nazad";
+			field = State.front();
+			State.pop_front();
+			count++;
+			nretry++;
+		}
+		else std::cout << " \n Eto konec.";
+		if (res2)
+			std::cout << "\nEto pobeda";
+
+		std::cout << "\nLyubaya klavisha - osuschestvlenie hoda; ESC - vihod\n";
+	}
+	State.clear();
 	return 0;
 }
 
-Core::~Core()
+bool Core::Move()
 {
-	for (UINT32 i = 0; i < Size; i++)
-		delete[] field[i];
-	delete[] field;
+	int dx=0, dy=0,ix=0,iy=0,lastx=0,lasty=0;
+	bool res=false;
+	do
+	{
+		dx = rand() % 3 - 1;
+		if ((dx != 0)&&(dx!=lastx)&&(ix<2))
+		{
+			res = field->Move(dx, 0);
+			ix++;
+			lastx = dx;
+		}
+		else
+		{
+			dy = rand() % 3 - 1;
+			if ((dy != 0)&&(dy!=lasty)&&(iy<2))
+			{
+				res = field->Move(0, dy);
+				iy++;
+				lasty = dy;
+			}
+		}
+
+	} while (((ix <2) && (iy <2))&&(!res));
+
+	return res;
+}
+
+bool Core::Check()
+{
+	bool res=false;
+	for (int i = 0; i < Size; i++)
+		for (int j = 0; j < Size; j++)
+			if (field->GetTile(i,j).GetNum() >= 2048)
+				res = true;
+	return res;
+}
+
+bool Core::CheckEmptyCells()
+{
+	bool res=false;
+	for (int i = 0; i < Size; i++)
+
+		for (int j = 0; j < Size; j++)
+			if (field->GetTile(i, j).GetNum() == 0)
+				res = true;
+	return res;
+}
+
+bool Core::Gen(bool clear)
+{
+	UINT32 x, y,num;
+	bool res=false;
+	if (clear)
+	{
+		do
+		{
+			x = rand() % Size;
+			y = rand() % Size;
+			num = rand() % 2+2;
+			num += num % 2;
+			if (field->GetTile(x, y).GetNum() == 0)
+			{
+				field->GetTile(x, y) = num;
+				res = true;
+			}
+		} while (!res);
+	}
+
+	return res;
+}
+
+bool Core::Gen(bool clear, std::list<TileBack> &TileBackup)
+{
+	UINT32 x, y, num;
+	bool res = false;
+	if (clear)
+	{
+		do
+		{
+			x = rand() % Size;
+			y = rand() % Size;
+			num = rand() % 2 + 2;
+			num += num % 2;
+			if (field->GetTile(x, y).GetNum() == 0)
+			{
+				field->GetTile(x, y) = num;
+				TileBack Back;
+				Back.tile = field->GetTile(x,y);
+				Back.posx = x;
+				Back.posy = y;
+				TileBackup.push_front(Back);
+				res = true;
+			}
+		} while (!res);
+	}
+
+	return res;
 }
 
 
+Core::~Core()
+{
+	delete field;
+}

@@ -1,28 +1,32 @@
 #pragma once
 #include "Tile.h"
+#include "Field.h"
 #include <stdio.h>
 #include <iostream>
-#include <cstdio>
-#include <Windows.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <list>
 
 class Core
 {
 public:
 	Core();
 	Core(UINT32 sizexy);
-	//===================
-	//dirx ==   -1 - left
-	//dirx ==	 1 - right
-	//diry ==	 1 - up
-	//diry ==	-1 - down
-	//===================
-	bool Move(int dirx, int diry);
 	void DrawField();
 	int Process();
+	//false - fail; true - succ
+	bool Move();
+	bool Check();
+	bool CheckEmptyCells();
+	bool Gen(bool clear);
+	bool Gen(bool clear, std::list<TileBack> &TileBackup);
 	virtual ~Core();
 
 private:
-	Tile** field;
+	Field *field;
 	UINT32 Size;
+	std::list<Field*> State;
+	std::list<TileBack> TileBackup;
 };
 
