@@ -22,12 +22,12 @@ Field::Field(UINT32 sizexy)
 
 Field::Field(const Field & a)
 {
-	if (field != nullptr)
+	/*if (field != nullptr)
 	{
 		for (int i = 0; i < Size; i++)
 			delete[] field[i];
 		delete[]field;
-	}
+	}*/
 	Size = a.Size;
 	field = new Tile*[Size];
 	for (int i = 0; i < Size; i++)

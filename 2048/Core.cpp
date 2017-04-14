@@ -40,7 +40,7 @@ int Core::Process()
 	system("cls");
 
 	//==============Initialize================
-	UINT32 retrycount = 30;
+	UINT32 retrycount = -1;
 	UINT32 nretry = 0;
 	UINT32 x = rand() % Size;
 	UINT32 y = rand() % Size;
@@ -60,19 +60,22 @@ int Core::Process()
 	{
 		system("cls");
 		
-		
-		this->DrawField();
 		if (count > 0)
 		{
-			field->GetTile(TileBackup.front().posx, TileBackup.front().posy) = TileBackup.front().tile;
+			*field = State.front();
+			State.pop_front();
+			if (field->GetTile(TileBackup.front().posx, TileBackup.front().posy).GetNum() == 0) {
+				field->GetTile(TileBackup.front().posx, TileBackup.front().posy) = TileBackup.front().tile;
+			}
 			TileBackup.pop_front();
 			count--;
 		}
 		else
 		{
-			State.push_front(field);
+			State.push_front(*field);
 			Gen(res3, TileBackup);
 		}
+		this->DrawField();
 		std::cout << "\n===================================";
 		this->DrawField();
 		system("pause>nul");
@@ -93,15 +96,16 @@ int Core::Process()
 		system("pause>nul");
 		
 		
-		if (!res1 && !res2 && !res3 && (nretry<retrycount))
+		if (!res1 && !res2 && !res3 )
 		{
-			std::cout << "\n Perehod na shag nazad";
-			field = State.front();
-			State.pop_front();
-			count++;
-			nretry++;
+			if (nretry<retrycount) {
+				std::cout << "\n Perehod na shag nazad";
+				count++;
+				nretry++;
+			}
+			else std::cout << " \n Eto konec.";
 		}
-		else std::cout << " \n Eto konec.";
+		
 		if (res2)
 			std::cout << "\nEto pobeda";
 

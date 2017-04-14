@@ -26,7 +26,7 @@ public:
 private:
 	Field *field;
 	UINT32 Size;
-	std::list<Field*> State;
+	std::list<Field> State;
 	std::list<TileBack> TileBackup;
 };
 
