@@ -117,101 +117,118 @@ int Core::Process()
 
 bool Core::Move()
 {
-	int dx=0, dy=0,ix=0,iy=0,lastx=0,lasty=0;
+	//int dx=0, dy=0,ix=0,iy=0,lastx=0,lasty=0;
 	bool res=false;
 	if (prevStep==0||prevStep==4)
-		if (field->Move(0, -1))
+		if (field->Move(1, 0))
 		{
 			res = true;
 			prevStep = 2;
+			return res;
 		}
-	else
-		if (field->Move(-1, 0))
-		{
-			res = true; prevStep = 3;
-		}
-		else
-			if (field->Move(1, 0)) {
-				res = true;
-				prevStep = 1;
-			}
-			else
-				if (field->Move(0, 1))
-				{
-					res = true;
-					prevStep = 4;
-				}
-	if (prevStep == 1)
-		if (field->Move(0, -1))
-		{
-			res = true;
-			prevStep = 2;
-		}
-		else
-			if (field->Move(-1, 0))
+		else 
+			if (field->Move(0, 1))
 			{
-				res = true;
+				res = true; 
 				prevStep = 3;
+				return res;
 			}
 			else
-				if (field->Move(1, 0))
-				{
+				if (field->Move(-1, 0)) {
 					res = true;
 					prevStep = 1;
+					return res;
 				}
 				else
-					if (field->Move(0, 1))
+					if (field->Move(-1, 0))
 					{
 						res = true;
 						prevStep = 4;
+						return res;
 					}
-	if (prevStep == 2)
-		if (field->Move(-1, 0))
-		{
-			res = true;
-			prevStep = 3;
-		}
-		else
-			if (field->Move(1, 0))
-			{
-				res = true;
-				prevStep = 1;
-			}
-			else
-				if (field->Move(0, 1))
-				{
-					res = true;
-					prevStep = 4;
-				}
-				else
-					if (field->Move(0, -1))
-					{
-						res = true;
-						prevStep = 2;
-					}
-	if (prevStep == 3)
-		if (field->Move(0, -1))
+	if (prevStep == 1)
+		if (field->Move(1, 0))
 		{
 			res = true;
 			prevStep = 2;
+			return res;
 		}
 		else
-			if (field->Move(-1, 0))
+			if (field->Move(0, 1))
 			{
 				res = true;
 				prevStep = 3;
+				return res;
+			}
+			else
+				if (field->Move(0, -1))
+				{
+					res = true;
+					prevStep = 1;
+					return res;
+				}
+				else
+					if (field->Move(-1, 0))
+					{
+						res = true;
+						prevStep = 4;
+						return res;
+					}
+	if (prevStep == 2)
+		if (field->Move(0, 1))
+		{
+			res = true;
+			prevStep = 3;
+			return res;
+		}
+		else
+			if (field->Move(0, -1))
+			{
+				res = true;
+				prevStep = 1;
+				return res;
 			}
 			else
 				if (field->Move(1, 0))
 				{
 					res = true;
 					prevStep = 2;
+					return res;
 				}
 				else
-					if (field->Move(0, 1))
+					if (field->Move(-1, 0))
 					{
 						res = true;
 						prevStep = 4;
+						return res;
+					}
+	if (prevStep == 3)
+		if (field->Move(1, 0))
+		{
+			res = true;
+			prevStep = 2;
+			return res;
+		}
+		else
+			if (field->Move(0,-1))
+			{
+				res = true;
+				prevStep = 1;
+				return res;
+			}
+			else
+				if (field->Move(0, 1))
+				{
+					res = true;
+					prevStep = 3;
+					return res;
+				}
+				else
+					if (field->Move(-1, 0))
+					{
+						res = true;
+						prevStep = 4;
+						return res;
 					}
 	return res;
 }
