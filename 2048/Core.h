@@ -26,6 +26,15 @@ public:
 private:
 	Field *field;
 	UINT32 Size;
+	//==========
+	//0 - none
+	//1 - right
+	//2 - down
+	//3 - left
+	//4 - up
+	//==========
+	INT32 prevStep;
+	INT32 a;
 	std::list<Field> State;
 	std::list<TileBack> TileBackup;
 };

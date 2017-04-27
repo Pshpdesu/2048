@@ -119,28 +119,100 @@ bool Core::Move()
 {
 	int dx=0, dy=0,ix=0,iy=0,lastx=0,lasty=0;
 	bool res=false;
-	do
-	{
-		dx = rand() % 3 - 1;
-		if ((dx != 0)&&(dx!=lastx)&&(ix<2))
+	if (prevStep==0||prevStep==4)
+		if (field->Move(0, -1))
 		{
-			res = field->Move(dx, 0);
-			ix++;
-			lastx = dx;
+			res = true;
+			prevStep = 2;
+		}
+	else
+		if (field->Move(-1, 0))
+		{
+			res = true; prevStep = 3;
 		}
 		else
-		{
-			dy = rand() % 3 - 1;
-			if ((dy != 0)&&(dy!=lasty)&&(iy<2))
-			{
-				res = field->Move(0, dy);
-				iy++;
-				lasty = dy;
+			if (field->Move(1, 0)) {
+				res = true;
+				prevStep = 1;
 			}
+			else
+				if (field->Move(0, 1))
+				{
+					res = true;
+					prevStep = 4;
+				}
+	if (prevStep == 1)
+		if (field->Move(0, -1))
+		{
+			res = true;
+			prevStep = 2;
 		}
-
-	} while (((ix <2) && (iy <2))&&(!res));
-
+		else
+			if (field->Move(-1, 0))
+			{
+				res = true;
+				prevStep = 3;
+			}
+			else
+				if (field->Move(1, 0))
+				{
+					res = true;
+					prevStep = 1;
+				}
+				else
+					if (field->Move(0, 1))
+					{
+						res = true;
+						prevStep = 4;
+					}
+	if (prevStep == 2)
+		if (field->Move(-1, 0))
+		{
+			res = true;
+			prevStep = 3;
+		}
+		else
+			if (field->Move(1, 0))
+			{
+				res = true;
+				prevStep = 1;
+			}
+			else
+				if (field->Move(0, 1))
+				{
+					res = true;
+					prevStep = 4;
+				}
+				else
+					if (field->Move(0, -1))
+					{
+						res = true;
+						prevStep = 2;
+					}
+	if (prevStep == 3)
+		if (field->Move(0, -1))
+		{
+			res = true;
+			prevStep = 2;
+		}
+		else
+			if (field->Move(-1, 0))
+			{
+				res = true;
+				prevStep = 3;
+			}
+			else
+				if (field->Move(1, 0))
+				{
+					res = true;
+					prevStep = 2;
+				}
+				else
+					if (field->Move(0, 1))
+					{
+						res = true;
+						prevStep = 4;
+					}
 	return res;
 }
 
